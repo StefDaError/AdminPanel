@@ -10,6 +10,9 @@ using System.Windows.Input;
 using AdminPanel.Database;
 using AdminPanel.Models;
 using AdminPanel.Networking;
+using System.IO;
+using AdminPanel.Services;
+using Microsoft.Win32;
 
 namespace AdminPanel.ViewModels;
 
@@ -56,6 +59,7 @@ public sealed class AdminViewModel : INotifyPropertyChanged
     public ICommand StopCommand { get; }
     public ICommand CopyUrlCommand { get; }
     public ICommand ClearDbCommand { get; }
+    public ICommand ExportExcelCommand { get; }
 
     public AdminViewModel(DatabaseService db)
     {
@@ -75,6 +79,7 @@ public sealed class AdminViewModel : INotifyPropertyChanged
         }, _ => _isRunning);
 
         ClearDbCommand = new RelayCommand(_ => ClearDatabase());
+        ExportExcelCommand = new RelayCommand(_ => ExportToExcel(), _ => Agents.Count > 0);
 
         LoadAgents();
     }
@@ -173,7 +178,38 @@ public sealed class AdminViewModel : INotifyPropertyChanged
             }
         }
     }
+    // --- Экспорт в Excel ---
+    private void ExportToExcel()
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = "Экспорт в Excel",
+            Filter = "Excel (*.xlsx)|*.xlsx",
+            FileName = $"AdminPanel_{DateTime.Now:yyyy-MM-dd_HH-mm}.xlsx"
+        };
 
+        if (dialog.ShowDialog() != true) return;
+
+        try
+        {
+            ExcelExporter.Export(
+                dialog.FileName,
+                _db.GetAllAgents(),
+                _db.GetAllLatestComponents());
+
+            UpdateStatus($"Экспортировано: {Path.GetFileName(dialog.FileName)}");
+        }
+        catch (IOException)
+        {
+            MessageBox.Show("Не удалось записать файл. Возможно, он открыт в Excel — закройте его и повторите.",
+                "Ошибка экспорта", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Ошибка экспорта: {ex.Message}",
+                "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
     // --- Вспомогательные методы ---
     private void UpdateStatus(string msg)
     {

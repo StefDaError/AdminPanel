@@ -265,6 +265,36 @@ public sealed class DatabaseService
         }
         return result;
     }
+    public List<(string DomainName, ComponentItem Item)> GetAllLatestComponents()
+    {
+        var result = new List<(string, ComponentItem)>();
+        using var conn = new SqliteConnection(_connectionString);
+        conn.Open();
+        using var cmd = conn.CreateCommand();
+
+        cmd.CommandText = @"
+        SELECT n.DomainName, c.Category, c.Name, c.Specs
+        FROM Components c
+        JOIN Nodes n ON n.NodeId = c.NodeId
+        WHERE c.SnapshotId = (
+            SELECT MAX(s.SnapshotId) FROM Snapshots s WHERE s.NodeId = c.NodeId
+        )
+        ORDER BY n.DomainName, c.Category, c.Name;";
+
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            result.Add((
+                reader.GetString(0),
+                new ComponentItem
+                {
+                    Category = reader.GetString(1),
+                    Name = reader.IsDBNull(2) ? "" : reader.GetString(2),
+                    Specs = reader.IsDBNull(3) ? "" : reader.GetString(3)
+                }));
+        }
+        return result;
+    }
     public void ClearAllData()
     {
         using var conn = new SqliteConnection(_connectionString);

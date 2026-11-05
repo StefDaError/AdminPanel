@@ -144,6 +144,14 @@
                         HorizontalAlignment="Left" 
                         Width="208"/>
 
+                <!-- Кнопка экспорта -->
+                <Button Content="Экспорт в Excel"
+                        Command="{Binding ExportExcelCommand}"
+                        Background="#1D7044"
+                        Margin="0,0,0,8"
+                        HorizontalAlignment="Left"
+                        Width="208"/>
+
                 <TextBlock Text="{Binding Status}" Foreground="#9A9A9A" Margin="0,0,0,4" TextWrapping="Wrap"/>
 
                 <!-- Блок ссылки для агента -->
