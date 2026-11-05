@@ -1,4 +1,4 @@
-﻿/*using System.IO;
+﻿using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AdminPanel.Models;
@@ -21,7 +21,7 @@ public sealed class DatabaseService
     {
         if (string.IsNullOrEmpty(dbPath))
         {
-           
+
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var folder = Path.Combine(appData, "AdminPanel");
             Directory.CreateDirectory(folder);
@@ -33,14 +33,14 @@ public sealed class DatabaseService
 
     public void Initialize()
     {
-        
+
         SQLitePCL.Batteries_V2.Init();
 
-        
+
         using var conn = new SqliteConnection(_connectionString);
         conn.Open();
 
-        
+
         var sql = @"
             PRAGMA foreign_keys = ON;
 
@@ -242,7 +242,7 @@ public sealed class DatabaseService
         conn.Open();
         using var cmd = conn.CreateCommand();
 
-       
+
         cmd.CommandText = @"
             SELECT Category, Name, Specs FROM Components
             WHERE SnapshotId = (
@@ -271,9 +271,8 @@ public sealed class DatabaseService
         conn.Open();
         using var cmd = conn.CreateCommand();
 
-        // Благодаря ON DELETE CASCADE в схеме, удаление узлов
-        // автоматически удалит все связанные снимки, компоненты и ОС.
+       
         cmd.CommandText = "DELETE FROM Nodes;";
         cmd.ExecuteNonQuery();
     }
-}*/
+}
