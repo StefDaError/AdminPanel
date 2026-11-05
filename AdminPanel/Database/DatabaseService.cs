@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿/*using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AdminPanel.Models;
@@ -21,7 +21,7 @@ public sealed class DatabaseService
     {
         if (string.IsNullOrEmpty(dbPath))
         {
-            // Сохраняем БД в C:\Users\<User>\AppData\Local\AdminPanel\admin.db
+           
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var folder = Path.Combine(appData, "AdminPanel");
             Directory.CreateDirectory(folder);
@@ -33,14 +33,14 @@ public sealed class DatabaseService
 
     public void Initialize()
     {
-        // 1. Инициализация SQLite (лечит ошибку SQLitePCL.raw.SetProvider)
+        
         SQLitePCL.Batteries_V2.Init();
 
-        // 2. Подключение (SQLite автоматически создаст файл admin.db, если его нет)
+        
         using var conn = new SqliteConnection(_connectionString);
         conn.Open();
 
-        // 3. Создание таблиц
+        
         var sql = @"
             PRAGMA foreign_keys = ON;
 
@@ -242,7 +242,7 @@ public sealed class DatabaseService
         conn.Open();
         using var cmd = conn.CreateCommand();
 
-        // Берем компоненты из самого последнего снимка (Snapshot) для этого агента
+       
         cmd.CommandText = @"
             SELECT Category, Name, Specs FROM Components
             WHERE SnapshotId = (
@@ -276,4 +276,4 @@ public sealed class DatabaseService
         cmd.CommandText = "DELETE FROM Nodes;";
         cmd.ExecuteNonQuery();
     }
-}
+}*/
